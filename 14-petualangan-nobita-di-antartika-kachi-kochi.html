@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nonton Doraemon</title>
+    <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+    <style>
+        body { background-color: #111; color: white; text-align: center; font-family: 'Segoe UI', sans-serif; padding: 20px; margin: 0; display: flex; flex-direction: column; align-items: center; }
+        h2 { margin-bottom: 20px; font-weight: 500; }
+        .video-container { width: 100%; max-width: 900px; position: relative; }
+        video { width: 100%; border-radius: 10px; box-shadow: 0 4px 15px rgba(255,255,255,0.1); background-color: black; aspect-ratio: 16 / 9; }
+        
+        #errorMsg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255,0,0,0.8); padding: 10px 20px; border-radius: 5px; display: none; z-index: 10; font-weight: bold; }
+
+        .controls { margin-top: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; align-items: center; }
+        button, select, .btn-download { padding: 12px 20px; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; text-decoration: none; transition: 0.3s; display: inline-block; background-color: #333; color: white; }
+        button:hover, select:hover { background-color: #444; }
+        .btn-download { background-color: #28a745; }
+        .btn-download:hover { background-color: #218838; }
+        #btnPlayPause { background-color: #ffc107; color: black; width: 120px; }
+        #btnPlayPause:hover { background-color: #e0a800; }
+        select { appearance: auto; outline: none; }
+    </style>
+</head>
+<body>
+
+    <div class="video-container">
+        <h2 id="videoTitle">Memuat Judul...</h2>
+        
+        <video id="videoPlayer" controls playsinline></video>
+        <div id="errorMsg">Video gagal dimuat. Silakan coba ganti Server.</div>
+
+        <div class="controls">
+            <button id="btnPlayPause" onclick="togglePlay()">▶️ Play</button>
+            
+            <select id="speedSelect" onchange="changeSpeed()">
+                <option value="0.5">Kecepatan 0.5x</option>
+                <option value="1" selected>Kecepatan 1x</option>
+                <option value="1.5">Kecepatan 1.5x</option>
+                <option value="2">Kecepatan 2x</option>
+            </select>
+
+            <button id="btnPiP" onclick="togglePiP()">🖼️ PiP</button>
+
+            <select id="serverSelect" onchange="switchSource(this.value)">
+                <option value="cf">☁️ Server: Cloudflare</option>
+                <option value="hf">🤗 Server: Hugging Face</option>
+            </select>
+
+            <button onclick="toggleFullscreen()">⛶ Full Screen</button>
+            
+            <a id="btnDownload" href="#" target="_blank" class="btn-download">⬇️ Unduh</a>
+        </div>
+    </div>
+
+    <script>
+        // ==============================================================
+        // GANTI 3 BARIS DI BAWAH INI UNTUK SETIAP FILE HTML (1-17)
+        // ==============================================================
+        
+        const videoTitle = "Doraemon: Petualangan Nobita di Antartika Kachi Kochi"; 
+        const urlCloudflare = "https://doraemon-2017-antartika.pages.dev/output.mpd"; 
+        const urlHuggingFace = "https://huggingface.co/datasets/jasonanugrah/doraemon-movies/resolve/main/Doraemon%20-%20Petualangan%20Nobita%20di%20Antartika%20Kachi%20Kochi.mp4";
+
+        // ==============================================================
+        // JANGAN UBAH KODE DI BAWAH INI
+        // ==============================================================
+
+        document.getElementById("videoTitle").innerText = videoTitle;
+        document.getElementById("btnDownload").href = urlHuggingFace + "?download=true";
+        
+        const video = document.getElementById("videoPlayer");
+        const serverSelect = document.getElementById("serverSelect");
+        const errorMsg = document.getElementById("errorMsg");
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        
+        const storageKeyPos = "doraemon_pos_" + videoTitle.replace(/[^a-zA-Z0-9]/g, '_');
+        const storageKeySpeed = "doraemon_speed_" + videoTitle.replace(/[^a-zA-Z0-9]/g, '_');
+
+        let player = null; // Player DASH disimpan di variabel global
+        let fallbackTimeout;
+        let wakeLock = null;
+
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // FUNGSI GANTI SOURCE YANG SUDAH DIPERBAIKI TOTAL
+        function switchSource(type) {
+            clearTimeout(fallbackTimeout);
+            errorMsg.style.display = "none"; 
+            
+            // 1. Hancurkan player lama jika ada
+            if (player) {
+                player.reset();
+                player = null;
+            }
+            
+            // 2. Bersihkan tag video sepenuhnya
+            video.pause();
+            video.removeAttribute('src'); 
+            video.load();
+
+            if (type === 'cf') {
+                // 🟢 MUAT CLOUDFLARE (DASH)
+                player = dashjs.MediaPlayer().create();
+                player.updateSettings({ streaming: { bufferTimeAtTopQuality: 30, stableBufferTime: 20 } });
+                player.initialize(video, urlCloudflare, true);
+                
+                // Deteksi error Cloudflare
+                player.on(dashjs.MediaPlayer.events.ERROR, function (e) {
+                    console.error("DASH Error:", e);
+                    errorMsg.innerText = "Gagal memuat Cloudflare. Coba ganti server ke Hugging Face.";
+                    errorMsg.style.display = "block";
+                });
+
+                // Auto Fallback (10 detik)
+                fallbackTimeout = setTimeout(() => {
+                    if (video.readyState < 2) {
+                        console.warn("Cloudflare lambat. Beralih ke Hugging Face...");
+                        serverSelect.value = "hf"; 
+                        switchSource('hf');
+                    }
+                }, 10000); 
+
+            } else {
+                // 🟢 MUAT HUGGING FACE (MP4)
+                video.src = urlHuggingFace;
+                video.load();
+                video.play().catch(e => console.log("Autoplay dicegah browser:", e));
+                
+                video.onerror = function() {
+                    errorMsg.innerText = "Gagal memuat video dari Hugging Face.";
+                    errorMsg.style.display = "block";
+                };
+            }
+        }
+
+        // Resume Playback
+        video.addEventListener('timeupdate', () => {
+            if (!video.paused && video.currentTime > 0) {
+                localStorage.setItem(storageKeyPos, video.currentTime);
+            }
+        });
+
+        video.addEventListener('loadedmetadata', () => {
+            const savedTime = localStorage.getItem(storageKeyPos);
+            if (savedTime && savedTime > 5) {
+                video.currentTime = parseFloat(savedTime);
+            }
+        });
+
+        // Play/Pause
+        function togglePlay() {
+            if (video.paused) video.play();
+            else video.pause();
+        }
+
+        video.addEventListener('play', () => {
+            document.getElementById("btnPlayPause").innerText = "⏸️ Pause";
+            requestWakeLock();
+        });
+
+        video.addEventListener('pause', () => {
+            document.getElementById("btnPlayPause").innerText = "▶️ Play";
+            releaseWakeLock();
+        });
+
+        // Kecepatan
+        const savedSpeed = localStorage.getItem(storageKeySpeed);
+        if (savedSpeed) {
+            document.getElementById("speedSelect").value = savedSpeed;
+            video.playbackRate = parseFloat(savedSpeed);
+        }
+
+        function changeSpeed() {
+            const speed = document.getElementById("speedSelect").value;
+            video.playbackRate = parseFloat(speed);
+            localStorage.setItem(storageKeySpeed, speed);
+        }
+
+        // PiP
+        async function togglePiP() {
+            try {
+                if (document.pictureInPictureElement) {
+                    await document.exitPictureInPicture();
+                } else {
+                    await video.requestPictureInPicture();
+                }
+            } catch (err) {
+                alert("PiP tidak didukung di browser ini.");
+            }
+        }
+
+        // Fullscreen
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                if (video.requestFullscreen) video.requestFullscreen();
+                else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
+                else if (video.msRequestFullscreen) video.msRequestFullscreen();
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+
+        // Wake Lock
+        async function requestWakeLock() {
+            if ('wakeLock' in navigator) {
+                try { wakeLock = await navigator.wakeLock.request('screen'); } 
+                catch (err) { console.log(`Wake Lock error: ${err.name}`); }
+            }
+        }
+
+        function releaseWakeLock() {
+            if (wakeLock !== null) {
+                wakeLock.release().then(() => { wakeLock = null; });
+            }
+        }
+
+        // Jalankan saat halaman dibuka
+        window.onload = () => {
+            if (isIOS) {
+                serverSelect.value = "hf"; 
+                switchSource('hf');
+            } else {
+                serverSelect.value = "cf"; 
+                switchSource('cf');
+            }
+        };
+    </script>
+</body>
+</html>
