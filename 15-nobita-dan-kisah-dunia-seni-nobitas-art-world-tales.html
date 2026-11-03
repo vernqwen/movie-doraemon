@@ -21,9 +21,21 @@
         #btnPlayPause { background-color: #ffc107; color: black; width: 120px; }
         #btnPlayPause:hover { background-color: #e0a800; }
         select { appearance: auto; outline: none; }
+    
+        /* --- TOMBOL KEMBALI --- */
+        .back-container { width: 100%; max-width: 900px; text-align: left; margin-bottom: 15px; }
+        .btn-back { background-color: #333; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px; display: inline-block; transition: 0.3s; border: 1px solid #444; }
+        .btn-back:hover { background-color: #444; color: #ffd700; transform: translateX(-5px); }
+        /* ---------------------- */
     </style>
 </head>
 <body>
+    
+    <!-- TOMBOL KEMBALI KE HALAMAN UTAMA -->
+    <div class="back-container">
+        <a href="index.html" class="btn-back">⬅️ Kembali ke Halaman Utama</a>
+    </div>
+
 
     <div class="video-container">
         <h2 id="videoTitle">Memuat Judul...</h2>
