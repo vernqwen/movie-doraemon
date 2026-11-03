@@ -1,64 +1,25 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bioskop Doraemon by Jason Anugrah</title>
     <style>
         body { background-color: #111; color: white; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; margin: 0; }
         h1 { color: #ffd700; margin-bottom: 20px; text-shadow: 0 0 10px rgba(255,215,0,0.3); font-size: 24px; }
-        
-        /* Search Bar */
         .search-container { max-width: 500px; margin: 0 auto 30px auto; }
         .search-container input { width: 100%; padding: 12px 20px; border-radius: 25px; border: 1px solid #444; background-color: #222; color: white; font-size: 16px; outline: none; box-sizing: border-box; transition: 0.3s; }
         .search-container input:focus { border-color: #ffd700; box-shadow: 0 0 10px rgba(255,215,0,0.3); }
-
-        /* Grid Poster: Diperkecil agar di HP jadi 2 kolom */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; max-width: 1100px; margin: 0 auto; }
-        
-        .card { 
-            position: relative;
-            background-color: #222;
-            border-radius: 10px; 
-            text-decoration: none; 
-            color: white; 
-            border: 2px solid #333; 
-            transition: 0.3s; 
-            aspect-ratio: 2 / 3;
-            width: 100%;
-            background-size: cover;
-            background-position: center;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end; 
-        }
-
-        .card::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.9) 100%);
-            z-index: 1;
-        }
-
-        /* Font judul di HP diperkecil agar tidak makan tempat */
+        .card { position: relative; background-color: #222; border-radius: 10px; text-decoration: none; color: white; border: 2px solid #333; transition: 0.3s; aspect-ratio: 2 / 3; width: 100%; background-size: cover; background-position: center; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.5); display: flex; flex-direction: column; justify-content: flex-end; }
+        .card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.9) 100%); z-index: 1; }
         .card h3 { margin: 0; font-size: 13px; position: relative; z-index: 2; padding: 10px; text-shadow: 1px 1px 3px rgba(0,0,0,1); }
-
         .card:hover { border-color: #ffd700; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(255,215,0,0.3); }
     </style>
 </head>
 <body>
     <h1>🎬 Bioskop Doraemon by Jason Anugrah</h1>
-    
-    <!-- Kolom Pencarian -->
-    <div class="search-container">
-        <input type="text" id="searchInput" onkeyup="filterMovies()" placeholder="🔍 Cari judul film Doraemon...">
-    </div>
-
+    <div class="search-container"><input type="text" id="searchInput" onkeyup="filterMovies()" placeholder="🔍 Cari judul film Doraemon..."></div>
     <div class="grid" id="movieGrid">
-        <!-- Daftar Film -->
         <a href="01-nobita-dan-manusia-negeri-hijau.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/01-nobita-dan-manusia-negeri-hijau.jpg');"><h3>Nobita dan Manusia Negeri Hijau (2008)</h3></a>
         <a href="02-nobita-dan-pertempuran-mermaids.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/02-nobita-dan-pertempuran-mermaids.jpg');"><h3>Nobita dan Pertempuran Mermaids (2010)</h3></a>
         <a href="03-nobita-dan-kelahiran-jepang.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/03-nobita-dan-kelahiran-jepang.jpg');"><h3>Nobita dan Kelahiran Jepang (2016)</h3></a>
@@ -77,20 +38,13 @@
         <a href="16-nobita-dan-langit-utopia.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/16-nobita-dan-langit-utopia.jpg');"><h3>Nobita dan Langit Utopia (2023)</h3></a>
         <a href="17-nobita-dan-pulau-keajaiban.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/17-nobita-dan-pulau-keajaiban.jpg');"><h3>Nobita dan Pulau Keajaiban (2012)</h3></a>
     </div>
-
     <script>
-        // Fungsi Pencarian
         function filterMovies() {
             let input = document.getElementById('searchInput').value.toLowerCase();
             let cards = document.getElementsByClassName('card');
-            
             for (let i = 0; i < cards.length; i++) {
                 let title = cards[i].getElementsByTagName('h3')[0].innerText.toLowerCase();
-                if (title.includes(input)) {
-                    cards[i].style.display = "flex";
-                } else {
-                    cards[i].style.display = "none";
-                }
+                cards[i].style.display = title.includes(input) ? "flex" : "none";
             }
         }
     </script>
