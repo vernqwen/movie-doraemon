@@ -6,33 +6,139 @@
     <title>Bioskop Doraemon</title>
     <style>
         body { background-color: #111; color: white; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; margin: 0; }
-        h1 { color: #ffd700; margin-bottom: 30px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; max-width: 1000px; margin: 0 auto; }
-        .card { background-color: #222; padding: 20px; border-radius: 10px; text-decoration: none; color: white; border: 1px solid #333; transition: 0.3s; }
-        .card:hover { background-color: #333; transform: translateY(-5px); box-shadow: 0 5px 15px rgba(255,215,0,0.2); }
-        .card h3 { margin: 0; font-size: 16px; }
+        h1 { color: #ffd700; margin-bottom: 30px; text-shadow: 0 0 10px rgba(255,215,0,0.3); }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
+        
+        /* Desain Kartu Tombol 2:3 */
+        .card { 
+            position: relative;
+            background-color: #222;
+            border-radius: 12px; 
+            text-decoration: none; 
+            color: white; 
+            border: 2px solid #333; 
+            transition: 0.3s; 
+            
+            /* Kunci Rasio 2:3 */
+            aspect-ratio: 2 / 3;
+            width: 100%;
+            
+            /* Pengaturan Gambar Latar */
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            
+            /* Agar teks ada di bawah */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; 
+        }
+
+        /* Gradasi Gelap (Overlay) di bagian bawah */
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.9) 100%);
+            transition: 0.3s;
+            z-index: 1;
+        }
+
+        /* Teks Judul di atas lapisan gelap */
+        .card h3 { 
+            margin: 0; 
+            font-size: 16px; 
+            position: relative; 
+            z-index: 2; 
+            padding: 15px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,1);
+        }
+
+        /* Efek saat mouse diarahkan (Hover) */
+        .card:hover { 
+            border-color: #ffd700; 
+            transform: translateY(-5px); 
+            box-shadow: 0 10px 20px rgba(255,215,0,0.3); 
+        }
+        .card:hover::before { 
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 20%, rgba(0,0,0,0.7) 100%);
+        }
     </style>
 </head>
 <body>
     <h1>🎬 Bioskop Doraemon</h1>
     <div class="grid">
-        <a href="01-nobita-dan-manusia-negeri-hijau.html" class="card"><h3>Nobita dan Manusia Negeri Hijau (2008)</h3></a>
-        <a href="02-nobita-dan-pertempuran-mermaids.html" class="card"><h3>Nobita dan Pertempuran Mermaids (2010)</h3></a>
-        <a href="03-nobita-dan-kelahiran-jepang.html" class="card"><h3>Nobita dan Kelahiran Jepang (2016)</h3></a>
-        <a href="04-nobita-dan-pahlawan-luar-angkasa.html" class="card"><h3>Nobita dan Pahlawan Luar Angkasa (2015)</h3></a>
-        <a href="05-nobita-dan-perang-bintang-kecil.html" class="card"><h3>Nobita dan Perang Bintang Kecil (2022)</h3></a>
-        <a href="06-nobita-dan-simfoni-bumi.html" class="card"><h3>Nobita dan Simfoni Bumi (2024)</h3></a>
-        <a href="07-petualangan-nobita-yang-penuh-misteri-di-hutan-afrika.html" class="card"><h3>Misteri di Hutan Afrika (2014)</h3></a>
-        <a href="08-nobitas-new-dinosaur-2020.html" class="card"><h3>Nobita's New Dinosaur (2020)</h3></a>
-        <a href="09-petualangan-super-nobita-di-planet-koya-koya.html" class="card"><h3>Planet Koya-koya (2009)</h3></a>
-        <a href="10-nobita-dan-pulau-harta-karun.html" class="card"><h3>Nobita dan Pulau Harta Karun (2018)</h3></a>
-        <a href="11-petualangan-nobita-di-museum-alat-alat-ajaib.html" class="card"><h3>Museum Alat-Alat Ajaib (2013)</h3></a>
-        <a href="12-nobita-dan-pasukan-robot-mechatopia.html" class="card"><h3>Pasukan Robot Mechatopia (2011)</h3></a>
-        <a href="13-petualangan-nobita-di-bulan.html" class="card"><h3>Petualangan di Bulan (2019)</h3></a>
-        <a href="14-petualangan-nobita-di-antartika-kachi-kochi.html" class="card"><h3>Antartika Kachi Kochi (2017)</h3></a>
-        <a href="15-nobita-dan-kisah-dunia-seni-nobitas-art-world-tales.html" class="card"><h3>Kisah Dunia Seni (2025)</h3></a>
-        <a href="16-nobita-dan-langit-utopia.html" class="card"><h3>Nobita dan Langit Utopia (2023)</h3></a>
-        <a href="17-nobita-dan-pulau-keajaiban.html" class="card"><h3>Nobita dan Pulau Keajaiban (2012)</h3></a>
+        
+        <a href="01-nobita-dan-manusia-negeri-hijau.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/01-nobita-dan-manusia-negeri-hijau.jpg');">
+            <h3>Nobita dan Manusia Negeri Hijau (2008)</h3>
+        </a>
+        
+        <a href="02-nobita-dan-pertempuran-mermaids.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/02-nobita-dan-pertempuran-mermaids.jpg');">
+            <h3>Nobita dan Pertempuran Mermaids (2010)</h3>
+        </a>
+        
+        <a href="03-nobita-dan-kelahiran-jepang.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/03-nobita-dan-kelahiran-jepang.jpg');">
+            <h3>Nobita dan Kelahiran Jepang (2016)</h3>
+        </a>
+        
+        <a href="04-nobita-dan-pahlawan-luar-angkasa.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/04-nobita-dan-pahlawan-luar-angkasa.jpg');">
+            <h3>Nobita dan Pahlawan Luar Angkasa (2015)</h3>
+        </a>
+        
+        <a href="05-nobita-dan-perang-bintang-kecil.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/05-nobita-dan-perang-bintang-kecil.jpg');">
+            <h3>Nobita dan Perang Bintang Kecil (2022)</h3>
+        </a>
+        
+        <a href="06-nobita-dan-simfoni-bumi.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/06-nobita-dan-simfoni-bumi.jpg');">
+            <h3>Nobita dan Simfoni Bumi (2024)</h3>
+        </a>
+        
+        <a href="07-petualangan-nobita-yang-penuh-misteri-di-hutan-afrika.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/07-petualangan-nobita-yang-penuh-misteri-di-hutan-afrika.jpg');">
+            <h3>Misteri di Hutan Afrika (2014)</h3>
+        </a>
+        
+        <a href="08-nobitas-new-dinosaur-2020.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/08-nobitas-new-dinosaur-2020.jpg');">
+            <h3>Nobita's New Dinosaur (2020)</h3>
+        </a>
+        
+        <a href="09-petualangan-super-nobita-di-planet-koya-koya.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/09-petualangan-super-nobita-di-planet-koya-koya.jpg');">
+            <h3>Planet Koya-koya (2009)</h3>
+        </a>
+        
+        <a href="10-nobita-dan-pulau-harta-karun.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/10-nobita-dan-pulau-harta-karun.jpg');">
+            <h3>Nobita dan Pulau Harta Karun (2018)</h3>
+        </a>
+        
+        <a href="11-petualangan-nobita-di-museum-alat-alat-ajaib.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/11-petualangan-nobita-di-museum-alat-alat-ajaib.jpg');">
+            <h3>Museum Alat-Alat Ajaib (2013)</h3>
+        </a>
+        
+        <a href="12-nobita-dan-pasukan-robot-mechatopia.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/12-nobita-dan-pasukan-robot-mechatopia.jpg');">
+            <h3>Pasukan Robot Mechatopia (2011)</h3>
+        </a>
+        
+        <a href="13-petualangan-nobita-di-bulan.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/13-petualangan-nobita-di-bulan.jpg');">
+            <h3>Petualangan di Bulan (2019)</h3>
+        </a>
+        
+        <a href="14-petualangan-nobita-di-antartika-kachi-kochi.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/14-petualangan-nobita-di-antartika-kachi-kochi.jpg');">
+            <h3>Antartika Kachi Kochi (2017)</h3>
+        </a>
+        
+        <a href="15-nobita-dan-kisah-dunia-seni-nobitas-art-world-tales.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/15-nobita-dan-kisah-dunia-seni-nobitas-art-world-tales.jpg');">
+            <h3>Kisah Dunia Seni (2025)</h3>
+        </a>
+        
+        <a href="16-nobita-dan-langit-utopia.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/16-nobita-dan-langit-utopia.jpg');">
+            <h3>Nobita dan Langit Utopia (2023)</h3>
+        </a>
+        
+        <a href="17-nobita-dan-pulau-keajaiban.html" class="card" style="background-image: url('https://doraemon-posters.pages.dev/17-nobita-dan-pulau-keajaiban.jpg');">
+            <h3>Nobita dan Pulau Keajaiban (2012)</h3>
+        </a>
+
     </div>
 </body>
 </html>
